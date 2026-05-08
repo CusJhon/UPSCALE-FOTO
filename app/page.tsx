@@ -30,7 +30,7 @@ import {
   Cpu,
   Heart,
 } from "lucide-react";
-import { motion, useMotionValue, useSpring, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
 // ==================================================
@@ -48,11 +48,8 @@ const MagneticButton = ({
   className?: string;
   disabled?: boolean;
 }) => {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
   const ref = useRef<HTMLButtonElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const springX = useSpring(x, { stiffness: 300, damping: 30 });
-  const springY = useSpring(y, { stiffness: 300, damping: 30 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!ref.current) return;
@@ -61,16 +58,14 @@ const MagneticButton = ({
     const centerY = rect.top + rect.height / 2;
     const distanceX = e.clientX - centerX;
     const distanceY = e.clientY - centerY;
-    const maxDistance = 30;
+    const maxDistance = 20;
     const moveX = (distanceX / (rect.width / 2)) * maxDistance;
     const moveY = (distanceY / (rect.height / 2)) * maxDistance;
-    x.set(moveX);
-    y.set(moveY);
+    setPosition({ x: moveX, y: moveY });
   };
 
   const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
+    setPosition({ x: 0, y: 0 });
   };
 
   return (
@@ -78,7 +73,8 @@ const MagneticButton = ({
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={{ x: springX, y: springY }}
+      animate={{ x: position.x, y: position.y }}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
       onClick={onClick}
       disabled={disabled}
       className={className}
@@ -114,6 +110,7 @@ const AnimatedCounter = ({ target, suffix = "" }: { target: number; suffix?: str
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
+      transition={{ duration: 0.5 }}
     >
       {count.toLocaleString()}
       {suffix}
@@ -137,6 +134,7 @@ const FeatureCard = ({
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
+      transition={{ duration: 0.5 }}
       whileHover={{ scale: 1.02, y: -5 }}
       className="relative group"
     >
@@ -468,13 +466,14 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Before/After Comparison Section - Interactive Slider */}
+        {/* Before/After Comparison Section */}
         <section className="relative py-20">
           <div className="container-premium">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
               className="text-center mb-12"
             >
               <h2 className="text-3xl sm:text-4xl font-bold mb-4">
@@ -489,25 +488,21 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
               className="glass-panel p-4 rounded-3xl max-w-4xl mx-auto"
             >
-              {/* Custom Compare Slider using pure CSS */}
               <div className="relative w-full aspect-video rounded-2xl overflow-hidden">
                 <div className="absolute inset-0 flex">
-                  <div className="w-1/2 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
-                      <div className="text-center">
-                        <ImageIcon className="w-12 h-12 text-gray-600 mx-auto mb-2" />
-                        <p className="text-gray-500 text-sm">Original Image</p>
-                      </div>
+                  <div className="w-1/2 relative overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                    <div className="text-center">
+                      <ImageIcon className="w-12 h-12 text-gray-600 mx-auto mb-2" />
+                      <p className="text-gray-500 text-sm">Original Image</p>
                     </div>
                   </div>
-                  <div className="w-1/2 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 to-purple-900 flex items-center justify-center">
-                      <div className="text-center">
-                        <Sparkles className="w-12 h-12 text-indigo-400 mx-auto mb-2" />
-                        <p className="text-indigo-300 text-sm">AI Enhanced 4K</p>
-                      </div>
+                  <div className="w-1/2 relative overflow-hidden bg-gradient-to-br from-indigo-900 to-purple-900 flex items-center justify-center">
+                    <div className="text-center">
+                      <Sparkles className="w-12 h-12 text-indigo-400 mx-auto mb-2" />
+                      <p className="text-indigo-300 text-sm">AI Enhanced 4K</p>
                     </div>
                   </div>
                 </div>
@@ -530,6 +525,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
               className="text-center mb-12"
             >
               <h2 className="text-3xl sm:text-4xl font-bold mb-4">
@@ -601,7 +597,7 @@ export default function Home() {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: idx * 0.1 }}
+                    transition={{ delay: idx * 0.1, duration: 0.5 }}
                   >
                     <item.icon className={`w-8 h-8 mx-auto mb-3 ${item.color}`} />
                     <div className="text-2xl font-bold text-white">{item.value}</div>
@@ -620,6 +616,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
               className="text-center mb-12"
             >
               <h2 className="text-3xl sm:text-4xl font-bold mb-4">
@@ -724,10 +721,10 @@ export default function Home() {
       <main className="relative z-10 container-premium py-10 sm:py-16">
         <div className="max-w-5xl mx-auto">
           {!originalPreview ? (
-            // Upload Area
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
               className="text-center mb-8"
             >
               <h2 className="text-2xl sm:text-3xl font-bold mb-2 text-gradient">Upload your image</h2>
@@ -759,6 +756,7 @@ export default function Home() {
                   >
                     <motion.div
                       animate={{ y: isDragOver ? -10 : 0 }}
+                      transition={{ duration: 0.2 }}
                       className="w-20 h-20 rounded-full bg-indigo-500/20 flex items-center justify-center mb-6"
                     >
                       <UploadCloud className="w-10 h-10 text-indigo-400" />
@@ -782,12 +780,14 @@ export default function Home() {
                       </span>
                     </div>
                     <div className="relative aspect-square rounded-2xl overflow-hidden bg-black/30 border border-white/10">
-                      <Image
-                        src={originalPreview!}
-                        alt="Original"
-                        fill
-                        className="object-contain"
-                      />
+                      {originalPreview && (
+                        <Image
+                          src={originalPreview}
+                          alt="Original"
+                          fill
+                          className="object-contain"
+                        />
+                      )}
                     </div>
                   </div>
 
@@ -806,8 +806,8 @@ export default function Home() {
                     <div className="relative aspect-square rounded-2xl overflow-hidden bg-black/30 border border-white/10">
                       {resultImage ? (
                         <motion.div
-                          initial={{ filter: "blur(12px)" }}
-                          animate={{ filter: "blur(0px)" }}
+                          initial={{ filter: "blur(12px)", opacity: 0 }}
+                          animate={{ filter: "blur(0px)", opacity: 1 }}
                           transition={{ duration: 0.5 }}
                           className="relative w-full h-full"
                         >
@@ -851,6 +851,7 @@ export default function Home() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.3 }}
                       className="mb-6 p-4 rounded-xl bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 text-center"
                     >
                       <div className="flex items-center justify-center gap-2 text-green-400">
@@ -868,6 +869,7 @@ export default function Home() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
                       className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center gap-3"
                     >
                       <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
@@ -878,17 +880,17 @@ export default function Home() {
 
                 {/* Action Buttons - ORIGINAL FUNCTIONALITY PRESERVED */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <MagneticButton
+                  <button
                     onClick={resetState}
                     disabled={isProcessing}
                     className="glass-card-light px-6 py-3 rounded-xl text-white font-medium hover:bg-white/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     <RefreshCw className="w-4 h-4" />
                     Try Another
-                  </MagneticButton>
+                  </button>
 
                   {!resultImage ? (
-                    <MagneticButton
+                    <button
                       onClick={handleUpscale}
                       disabled={isProcessing}
                       className="relative overflow-hidden px-8 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 text-white font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group"
@@ -904,15 +906,15 @@ export default function Home() {
                           Upscale to HD
                         </>
                       )}
-                    </MagneticButton>
+                    </button>
                   ) : (
-                    <MagneticButton
+                    <button
                       onClick={handleDownload}
                       className="px-8 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-green-500 text-white font-medium flex items-center justify-center gap-2"
                     >
                       <Download className="w-4 h-4" />
                       Download Result
-                    </MagneticButton>
+                    </button>
                   )}
                 </div>
               </div>
