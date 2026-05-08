@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     }
 
     // Direct upload to HD API
-    const apiUrl = `https://api.theresav.biz.id/tools/hd?apikey=DDKta`;
+    const apiUrl = `https://api.theresav.biz.id/tools/hd?apikey=5hgim`;
     
     // Create new form data with field named "image" as expected by the API
     const hdForm = new FormData();
